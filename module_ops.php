@@ -617,18 +617,37 @@ function combine_chart($chartType = 'MSColumn3D', $outputArr = array(), $chartAt
     # Set Relative Path of swf file.
     $FC->setSWFPath("FusionCharts/");
 
-    $chartAttr = str_replace(':', '=', $chartAttr);
-    $chartAttr = str_replace("',", ";", $chartAttr);
-    $chartAttr = trim(str_replace("'", "", $chartAttr));
+    //////////////////////////    Chart Customization Attribute - parsing Start ///////////////////////////////////////
+    $chartAttr = (json_decode(stripcslashes($chartAttr), true));
+
+
+    $xaxisAttr = '';
+    if (isset($chartAttr['xAxis']) && count($chartAttr['xAxis']) > 0) {
+        foreach (($chartAttr['xAxis'][0]) as $xKeyAttr => $xValAttr) {
+            $xaxisAttr.= $xKeyAttr . "=" . $xValAttr . ";";
+        }
+    }
+    $FC->setCategoriesParams($xaxisAttr);
+
+    $chartaxisAttr = '';
+    if (isset($chartAttr['chart']) && count($chartAttr['chart']) > 0) {
+        foreach (($chartAttr['chart']) as $chartKeyAttr => $chartValAttr) {
+            $chartaxisAttr.= $chartKeyAttr . "=" . $chartValAttr . ";";
+        }
+    }
+    //////////////////////////    Chart Customization Attribute - parsing End ///////////////////////////////////////
+//    $chartAttr = str_replace(':', '=', $chartAttr);
+//    $chartAttr = str_replace("',", ";", $chartAttr);
+//    $chartAttr = trim(str_replace("'", "", $chartAttr));
 
     if ($axis_selector['y2_axis_lbl'] != '') {
-        $chartAttr.="PYAxisName=" . $axis_selector['y1_axis_lbl'] . ";SYAXisName=" . $axis_selector['y2_axis_lbl'] . ";";
+        $chartaxisAttr.="PYAxisName=" . $axis_selector['y1_axis_lbl'] . ";SYAXisName=" . $axis_selector['y2_axis_lbl'] . ";";
     } else {
-        $chartAttr.="yaxisName=" . $axis_selector['y1_axis_lbl'] . ";";
+        $chartaxisAttr.="yaxisName=" . $axis_selector['y1_axis_lbl'] . ";";
     }
 
     # Define chart attributes
-    $strParam = "caption=Chart;xAxisName=" . $axis_selector['x_axis_lbl'] . ";$chartAttr";
+    $strParam = "caption=Chart;xAxisName=" . $axis_selector['x_axis_lbl'] . ";$chartaxisAttr";
 
     # Set chart attributes
     $FC->setChartParams($strParam);
@@ -646,6 +665,42 @@ function stacked_chart($chartType = 'StackedBar2D', $outputArr = array(), $chart
 
     $datasetArr = array();
     $FC = new FusionCharts("$chartType", "100%", "300");
+
+
+    //////////////////////////    Chart Customization Attribute - parsing Start ///////////////////////////////////////
+    $chartAttr = (json_decode(stripcslashes($chartAttr), true));
+
+
+    $xaxisAttr = '';
+    if (isset($chartAttr['xAxis']) && count($chartAttr['xAxis']) > 0) {
+        foreach (($chartAttr['xAxis'][0]) as $xKeyAttr => $xValAttr) {
+            $xaxisAttr.= $xKeyAttr . "=" . $xValAttr . ";";
+        }
+    }
+    $FC->setCategoriesParams($xaxisAttr);
+
+    $y1axisAttr = array();
+    if (isset($chartAttr['y1Axis']) && count($chartAttr['y1Axis']) > 0) {
+        $i = 0;
+        foreach (($chartAttr['y1Axis']) as $val) {
+            $y1axis = '';
+            foreach ($val as $y1KeyAttr => $y1ValAttr) {
+                $y1axis.= $y1KeyAttr . "=" . $y1ValAttr . ";";
+            }
+            $y1axisAttr[$i] = $y1axis;
+            $i++;
+        }
+    }
+
+    $chartaxisAttr = '';
+    if (isset($chartAttr['chart']) && count($chartAttr['chart']) > 0) {
+        foreach (($chartAttr['chart']) as $chartKeyAttr => $chartValAttr) {
+            $chartaxisAttr.= $chartKeyAttr . "=" . $chartValAttr . ";";
+        }
+    }
+    //////////////////////////    Chart Customization Attribute - parsing End ///////////////////////////////////////
+
+
     $xaxis = array();
     for ($i = 0; $i < count($outputArr); $i++) {
         if ($axis_selector['x_axis_select'] != '' && $axis_selector['x_axis_select'] != null)
@@ -659,9 +714,12 @@ function stacked_chart($chartType = 'StackedBar2D', $outputArr = array(), $chart
             $no_fields = 1;
         }
     }
+    $k = 0;
     if (count($axis_selector['y1_axis_select']) > 0)
         foreach ($axis_selector['y1_axis_select'] as $series_names) {
-            $FC->addDataset($series_names);
+//            var_dump($y1axisAttr[$k]);
+            $FC->addDataset($series_names,"$y1axisAttr[$k]");
+            $k++;
             for ($i = 0; $i < count($outputArr); $i++) {
                 $FC->addChartData($outputArr[$i][$series_names]);
             }
@@ -673,13 +731,6 @@ function stacked_chart($chartType = 'StackedBar2D', $outputArr = array(), $chart
     for ($l = 0; $l < count($xaxis); $l++) {
         $FC->addCategory($xaxis[$l]);
     }
-
-//    if ((is_array($select_color)) && ($select_color != array())) {
-//        $select_color = implode(";", $select_color);
-//        if ($select_color != '')
-//            $FC->addColors("$select_color");
-//    }
-
     foreach (array_values(array_unique($datasetArr)) as $k => $v) {
         $FC->addDataset($v);
         for ($index = 0; $index < count($arrData); $index++) {
@@ -690,18 +741,14 @@ function stacked_chart($chartType = 'StackedBar2D', $outputArr = array(), $chart
     # Set Relative Path of swf file.
     $FC->setSWFPath("FusionCharts/");
 
-    $chartAttr = str_replace(':', '=', $chartAttr);
-    $chartAttr = str_replace("',", ";", $chartAttr);
-    $chartAttr = trim(str_replace("'", "", $chartAttr));
-
     if ($axis_selector['y2_axis_lbl'] != '') {
-        $chartAttr.="PYAxisName=" . $axis_selector['y1_axis_lbl'] . ";SYAXisName=" . $axis_selector['y2_axis_lbl'] . ";";
+        $chartaxisAttr.="PYAxisName=" . $axis_selector['y1_axis_lbl'] . ";SYAXisName=" . $axis_selector['y2_axis_lbl'] . ";";
     } else {
-        $chartAttr.="yAxisName=" . $axis_selector['y1_axis_lbl'] . ";";
+        $chartaxisAttr.="yAxisName=" . $axis_selector['y1_axis_lbl'] . ";";
     }
 
     # Define chart attributes
-    $strParam = "caption=Chart;PYAxisName=Lifetime;xAxisName=" . $axis_selector['x_axis_lbl'] . ";stack100Percent=$fullstack;$chartAttr";
+    $strParam = "caption=Chart;PYAxisName=Lifetime;xAxisName=" . $axis_selector['x_axis_lbl'] . ";stack100Percent=$fullstack;$chartaxisAttr";
     $FC->setChartParams($strParam);
 
 //    $FC->setRenderer("javascript");
@@ -714,21 +761,25 @@ function pie_chart($chartType = 'Pie2D', $outputArr = array(), $chartAttr = '', 
 
     $datasetArr = array();
     $FC = new FusionCharts("$chartType", "100%", "300");
-    $xaxis = array();
-    for ($i = 0; $i < count($outputArr); $i++) {
-        if ($axis_selector['x_axis_select'] != '' && $axis_selector['x_axis_select'] != null)
-            $xaxis[$i] = $outputArr[$i][$axis_selector['x_axis_select']];
-        else
-            $xaxis[$i] = $outputArr[$i][0];
-//        $datasetArr[$i] = $outputArr[$i][1];
+    //////////////////////////    Chart Customization Attribute - parsing Start ///////////////////////////////////////
+    $chartAttr = (json_decode(stripcslashes($chartAttr), true));
+    $xaxisAttr = '';
+    if (isset($chartAttr['xAxis']) && count($chartAttr['xAxis']) > 0) {
+        foreach (($chartAttr['xAxis'][0]) as $xKeyAttr => $xValAttr) {
+            $xaxisAttr.= $xKeyAttr . "=" . $xValAttr . ";";
+        }
     }
-    $xaxis = array_values(array_unique($xaxis));
+    
+    $FC->setCategoriesParams($xaxisAttr);
 
-//    if ((is_array($select_color)) && ($select_color != array())) {
-//        $select_color = implode(";", $select_color);
-//        if ($select_color != '')
-//            $FC->addColors("$select_color");
-//    }
+    $chartaxisAttr = '';
+    if (isset($chartAttr['chart']) && count($chartAttr['chart']) > 0) {
+        foreach (($chartAttr['chart']) as $chartKeyAttr => $chartValAttr) {
+            $chartaxisAttr.= $chartKeyAttr . "=" . $chartValAttr . ";";
+        }
+    }
+    //////////////////////////    Chart Customization Attribute - parsing End ///////////////////////////////////////
+
     for ($index = 0; $index < count($outputArr); $index++) {
         $series_name = $axis_selector['y1_axis_select'][0];
 
@@ -737,18 +788,14 @@ function pie_chart($chartType = 'Pie2D', $outputArr = array(), $chartAttr = '', 
     # Set Relative Path of swf file.
     $FC->setSWFPath("FusionCharts/");
 
-    $chartAttr = str_replace(':', '=', $chartAttr);
-    $chartAttr = str_replace("',", ";", $chartAttr);
-    $chartAttr = trim(str_replace("'", "", $chartAttr));
-
     if ($axis_selector['y2_axis_lbl'] != '') {
-        $chartAttr.="PYAxisName=" . $axis_selector['y1_axis_lbl'] . ";SYAXisName=" . $axis_selector['y2_axis_lbl'] . ";";
+        $chartaxisAttr.="PYAxisName=" . $axis_selector['y1_axis_lbl'] . ";SYAXisName=" . $axis_selector['y2_axis_lbl'] . ";";
     } else {
-        $chartAttr.="yAxisName=" . $axis_selector['y1_axis_lbl'] . ";";
+        $chartaxisAttr.="yAxisName=" . $axis_selector['y1_axis_lbl'] . ";";
     }
 
     # Define chart attributes
-    $strParam = "caption=Chart;xAxisName=" . $axis_selector['x_axis_lbl'] . ";$chartAttr";
+    $strParam = "caption=Chart;xAxisName=" . $axis_selector['x_axis_lbl'] . ";$chartaxisAttr";
     $FC->setChartParams($strParam);
 
     $variable = $FC->renderChart(FALSE, FALSE);
@@ -805,11 +852,6 @@ function multiYaxis_chart($chartType = 'MSCombiDY2D', $outputArr = array(), $cha
         }
     }
     //////////////////////////    Chart Customization Attribute - parsing End ///////////////////////////////////////
-
-    
-//    $chartAttr = str_replace(':', '=', $chartAttr);
-//    $chartAttr = str_replace("',", ";", $chartAttr);
-//    $chartAttr = trim(str_replace("'", "", $chartAttr));
 
     if ($axis_selector['y2_axis_lbl'] != '') {
         $chartaxisAttr.="PYAxisName=" . $axis_selector['y1_axis_lbl'] . ";SYAXisName=" . $axis_selector['y2_axis_lbl'] . ";";
@@ -879,15 +921,25 @@ function multiYaxis_chart($chartType = 'MSCombiDY2D', $outputArr = array(), $cha
 function scatter_chart($chartType = 'Scatter', $outputArr = array(), $chartAttr = '', $axis_selector = '') {
     $FC = new FusionCharts("$chartType", "100%", "300");
     $FC->setSWFPath("FusionCharts/");
-//      Bubble
-//    $xaxis = array();
-//    for ($i = 0; $i < count($outputArr); $i++) {
-//        if ($axis_selector['x_axis_select'] != '' && $axis_selector['x_axis_select'] != null)
-//            $xaxis[$i] = $outputArr[$i][$axis_selector['x_axis_select']];
-//        else
-//            $xaxis[$i] = $outputArr[$i][0];
-//    }
-//    $xaxis = array_values(array_unique($xaxis));
+
+
+    //////////////////////////    Chart Customization Attribute - parsing Start ///////////////////////////////////////
+    $chartAttr = (json_decode(stripcslashes($chartAttr), true));
+    $xaxisAttr = '';
+    if (isset($chartAttr['xAxis']) && count($chartAttr['xAxis']) > 0) {
+        foreach (($chartAttr['xAxis'][0]) as $xKeyAttr => $xValAttr) {
+            $xaxisAttr.= $xKeyAttr . "=" . $xValAttr . ";";
+        }
+    }
+    $FC->setCategoriesParams($xaxisAttr);
+    $chartaxisAttr = '';
+    if (isset($chartAttr['chart']) && count($chartAttr['chart']) > 0) {
+        foreach (($chartAttr['chart']) as $chartKeyAttr => $chartValAttr) {
+            $chartaxisAttr.= $chartKeyAttr . "=" . $chartValAttr . ";";
+        }
+    }
+    //////////////////////////    Chart Customization Attribute - parsing End ///////////////////////////////////////
+
     $xseries = $axis_selector['x_axis_select'];
 
     if ($chartType == 'Scatter') {
@@ -905,18 +957,14 @@ function scatter_chart($chartType = 'Scatter', $outputArr = array(), $chartAttr 
             $FC->addChartData($outputArr[$index][$xseries], "y=" . $outputArr[$index][$yseries_name] . ";z=" . (($outputArr[$index][$zseries_name] <= 0) ? 5 : $outputArr[$index][$zseries_name]));
         }
     }
-    $chartAttr = str_replace(':', '=', $chartAttr);
-    $chartAttr = str_replace("',", ";", $chartAttr);
-    $chartAttr = trim(str_replace("'", "", $chartAttr));
-
     if ($axis_selector['y2_axis_lbl'] != '') {
-        $chartAttr.="PYAxisName=" . $axis_selector['y1_axis_lbl'] . ";SYAXisName=" . $axis_selector['y2_axis_lbl'] . ";";
+        $chartaxisAttr.="PYAxisName=" . $axis_selector['y1_axis_lbl'] . ";SYAXisName=" . $axis_selector['y2_axis_lbl'] . ";";
     } else {
-        $chartAttr.="yAxisName=" . $axis_selector['y1_axis_lbl'] . ";";
+        $chartaxisAttr.="yAxisName=" . $axis_selector['y1_axis_lbl'] . ";";
     }
 
     # Define chart attributes
-    $strParam = "caption=Chart;xAxisName=" . $axis_selector['x_axis_lbl'] . ";$chartAttr";
+    $strParam = "caption=Chart;xAxisName=" . $axis_selector['x_axis_lbl'] . ";$chartaxisAttr";
 
     $FC->setChartParams($strParam);
 
