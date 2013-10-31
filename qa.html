@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Mission Control</title>
+        <link href="css/style.css" type="text/css" rel="stylesheet" />
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
+        <script type="text/javascript" src="js/application.js"></script>
+        <script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js" type="text/javascript"></script>
+        <link href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" type="text/css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="container">
+            <h1>UnoApp/ Antelope Social Intelligence</h1>
+            <div style="float: right">Welcome, <label id="username_header"></label>
+                <input type="button" value="Logout" class="" onclick="javascript:logout();">
+            </div>
+            <h3>Mission Control</h3>
+            <ul class="tabs">
+                <li><a  id="mission_controlpage" href="home.php">Mission Control</a></li>
+                <li><a href="managepages.php" id="manage_pages">Manage Pages</a></li>
+                <li><a href="qa.html" id="qa_page">Qa</a></li>
+                <li><a href="modules.php" id="module_page">Modules</a></li>
+            </ul>
+            <script type="text/javascript">
+                 var qa_contact_id='';
+                 var qa_contact_name;
+                $(document).ready(function() {
+                   
+                    $.ajax({
+                        url:'header.php',
+                        type: 'post',
+                        async:false,
+                        success:function(data){
+                            var obj=($.parseJSON(data));
+                            qa_contact_id=obj.qa_contact_id;
+                            qa_contact_name=obj.qa_contact_name;
+                            $("#username_header").html(qa_contact_name);
+                        }
+                    });
+                    //Default Action
+                    //        $(".tab_content").hide(); //Hide all content
+                    $("#qa_page").addClass("selected"); //Activate first tab
+                    fillEmailTo(qa_contact_id);
+                });      
+
+            </script>
+            <div id="content">
+
+            </div>
+            <div class="clear"></div>
+            <div class="tab_container">
+                <div id="tab3" class="tab_content" style="padding: 1px;">
+                    <div class="tab-nav">
+                        <ul class="tab-nav">
+                            <li><a href="qa-facebook.html">Facebook</a></li>
+                            <li><a data-href="twitter2">Twitter</a></li>
+                            <li><a data-href="youtube2">Youtube</a></li>
+                            <li><a data-href="instagram2">Instagram</a></li>
+                            <li><a style="border:none;" data-href="pinterest2">Pinterest</a></li>
+                        </ul>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="qa-content">
+                        <div class="qa">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr class="">
+                                    <td>Network</td>
+                                    <td>Last Checked</td>
+                                    <td>Varified By</td>
+                                    <td>Score</td>
+                                    <td>Status</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr class="qa-even">
+                                    <td style="text-align: left;"><img src="images/facebook.png" alt="" />Facebook</td>
+                                    <td>10:30 AM June 20, 2013</td>
+                                    <td>Trey anastasio</td>
+                                    <td class="green large-font">6/6</td>
+                                    <td class="green"><img src="images/pass-icon.png" alt="" />Pass</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr class="qa-odd">
+                                    <td style="text-align: left;"><img src="images/twitter.png" alt="" />Twitter</td>
+                                    <td>10:30 AM June 20, 2013</td>
+                                    <td>Trey anastasio</td>
+                                    <td class="dark-yellow large-font">3/4</td>
+                                    <td class="dark-yellow"><img src="images/varification-icon.png" alt="" />Need Varification</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr class="qa-even">
+                                    <td style="text-align: left;"><img src="images/you-tube.png" alt="" />Facebook</td>
+                                    <td>10:30 AM June 20, 2013</td>
+                                    <td>Trey anastasio</td>
+                                    <td class="red large-font">1/4</td>
+                                    <td class="red"><img src="images/fail-icon.png" alt="" />Fail</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr class="qa-odd">
+                                    <td style="text-align: left;"><img src="images/instagram.png" alt="" />Twitter</td>
+                                    <td>10:30 AM June 20, 2013</td>
+                                    <td>Trey anastasio</td>
+                                    <td class="dark-yellow large-font">3/4</td>
+                                    <td class="dark-yellow"><img src="images/varification-icon.png" alt="" />Need Varification</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr class="qa-even">
+                                    <td style="text-align: left;"><img src="images/pinterest.png" alt="" />Facebook</td>
+                                    <td>10:30 AM June 20, 2013</td>
+                                    <td>Trey anastasio</td>
+                                    <td class="red large-font">1/4</td>
+                                    <td class="red"><img src="images/fail-icon.png" alt="" />Fail</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr class="qa-odd">
+                                    <td style="text-align: left;"><img src="images/future-network.png" alt="" />Twitter</td>
+                                    <td>10:30 AM June 20, 2013</td>
+                                    <td>Trey anastasio</td>
+                                    <td class="dark-yellow large-font">3/4</td>
+                                    <td class="dark-yellow"><img src="images/varification-icon.png" alt="" />Need Varification</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="margin:10px 0 0 15px;">Send Email Updates To:
+                            <div class="clear"></div>
+                        </div>
+                        <div class="clear"></div>
+                        <div class="submit-email">
+                            <div style="float:left; width:86%; margin-left: 15px;">
+                                <input type="text" name="mailTo" id="mailTo">
+                            </div>
+                            <div class="btn-save"><a href="javascript:void(0);" onclick="javascript:addSendMailIds(<?=$_SESSION['qa_contact_id']?>);">save</a></div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

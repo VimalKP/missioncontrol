@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <title>Login</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link href="css/stylesheet.css" rel="stylesheet" type="text/css" />
+        <link href="bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet" />
+        <link rel="shortcut icon" href="#">
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/application.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="span6">
+                    <form action="javascript:void(0)" method="post" name="frmlogin">
+                        <div class="login">
+                            <div class="table"><div class="log">Login</div><br>
+                                <div style="color: red;font-size: 20px; text-align: center;" id="errmsg_id">
+                                </div>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <div class="text">Username:</div>
+                                        </td>
+                                        <td>
+                                            <input name="username" type="text" dir="ltr" class="textbox" id="username" title="Enter Email"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="text">Password:</div>
+                                        </td>
+                                        <td>
+                                            <input name="password" type="password" dir="ltr"  class="textbox" id="password" title="Enter Password"/>
+                                        </td>
+                                    </tr>
+                                    <tr style="margin-top: 15px;">
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <div class="btn btn-primary pull-left btn-margin" id="loginBtn" onclick="javascript:chkUser();">Login</div>
+                                            <div class="btn btn-primary pull-left btn-margin" onclick="javascript:resetform();">Reset</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                    <script type="text/javascript">
+                        
+                        $('#password').bind('keypress', function(e) {
+                            if(e.keyCode==13){
+                                chkUser();
+                            }
+                        });
+                        
+                        function chkUser(){
+                            var username=$("#username").val();
+                            var password=$("#password").val();
+                            if((username)=="")
+                            {
+                                //                    alert("Missing : Username");
+                                document.getElementById("errmsg_id").innerHTML = "Missing : Username";
+                                document.frmlogin.username.focus();
+                                return false;
+                            }
+                            if((password)=="")
+                            {
+                                //                    alert("Missing : Password");
+                                document.getElementById("errmsg_id").innerHTML = "Missing : Password";
+                                document.frmlogin.password.focus();
+                                return false;
+                            }
+                            var params = "action=checklogin&username=" + username + "&password=" + password;
+                            $.ajax({
+                                url:'login_ops.php',
+                                type: 'post',
+                                data: params,
+                                beforeSend: function(){
+//                                    unoload();
+                                    $("#loginBtn").attr('disabled','disabled');
+                                    $("#loginBtn").attr('onclick','');
+               
+                                },
+                                success:function(data){
+//                                    unoloaded();
+                                    outstr=(data);
+                                    if(outstr.indexOf("login_pass")>0)
+                                    {
+                                        window.location.href="home.php";
+                                        //                            window.location.href="antelope.php";
+                                    }
+                                    else
+                                    {
+                                        document.getElementById("errmsg_id").innerHTML = data;  
+                                    }
+                                    //                                    $("#loginBtn").removeAttribute('disabled');
+                                    $("#loginBtn").attr('onclick','javascript:chkUser();');
+                                    return false;
+                                }
+                            });
+                            return false;
+                        } 
+                        function resetform(){
+                            $("#username").val('');
+                            $("#password").val('');
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
