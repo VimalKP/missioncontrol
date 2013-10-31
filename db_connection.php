@@ -47,7 +47,7 @@ if ($isLocal == true) {
       define('DB_WEBTOOL_DATABASE',  'dmbdemo_webtool'); */ // added for method  adding record to both database     
 }
 define("API_GRAPH", 'https://graph.facebook.com/');
-define("ANTELOPE_SITE_URL_REMOTE", "http://" . $_SERVER['HTTP_HOST'] . "/unoappsocial/");
+define("ANTELOPE_SITE_URL_REMOTE", "http://" . $_SERVER['HTTP_HOST'] . "/missioncontrol/");
 include_once 'includes/functions.php';
 $channels = array(
     'facebook' => 'dmbdemo_facebook',
